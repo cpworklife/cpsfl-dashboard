@@ -4,6 +4,37 @@ import matplotlib.pyplot as plt
 import io
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
+
+# Scrolling banner
+st.markdown(
+    """
+    <marquee style='font-size:24px; color:#00796B; background:#E0F7FA; padding:10px;'>
+    🌟 Community Partners of South Florida 🌟
+    </marquee>
+    """,
+    unsafe_allow_html=True
+)
+
+# Company logo centered below the banner
+st.markdown(
+    """
+    <div style='text-align: center;'>
+        <img src='https://raw.githubusercontent.com/yourusername/yourrepo/main/CP_Black_Logo.png' width='200'>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Dark mode toggle (simulated with background color swap)
+dark_mode = st.toggle("🌙 Dark Mode")
+if dark_mode:
+    st.markdown("""
+    <style>
+        body { background-color: #121212; color: white; }
+        .stApp { background-color: #121212; color: white; }
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("📊 CPSFL Scorecard Dashboard")
 
 # Load data directly from Google Sheets CSV link
@@ -15,7 +46,10 @@ if st.button("🔄 Refresh Data"):
 
 try:
     df = pd.read_csv(sheet_url)
-    df['Date'] = pd.to_datetime(df['Date'])
+
+    # Safely convert any values in Date to string before parsing
+    df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
+    df = df.dropna(subset=['Date'])  # Drop any rows where date couldn't be parsed
     df['DateLabel'] = df['Date'].dt.strftime('%-m/%-d')
 
     # Line Chart: Overall Score
@@ -60,6 +94,13 @@ try:
     # Optional: Data preview
     with st.expander("🔍 View Raw Data"):
         st.dataframe(df)
+
+    # AI Summary of trends
+    st.subheader("🧠 AI Trend Summary")
+    avg_score = df['Overall % Completed (MHOs & Discharges)'].mean()
+    recent_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
+    trend = "📈 improving" if recent_score > avg_score else "📉 declining"
+    st.markdown(f"The overall score is currently at **{recent_score:.2f}%**, which is {trend} compared to the average of **{avg_score:.2f}%**.")
 
 except Exception as e:
     st.error(f"An error occurred while loading the Google Sheet: {e}")
