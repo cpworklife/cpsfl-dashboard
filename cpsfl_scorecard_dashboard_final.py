@@ -11,7 +11,7 @@ sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xi
 
 # Refresh button
 if st.button("🔄 Refresh Data"):
-    st.experimental_rerun()
+    st.rerun()
 
 try:
     df = pd.read_csv(sheet_url)
