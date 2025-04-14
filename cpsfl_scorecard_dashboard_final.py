@@ -44,6 +44,7 @@ try:
 
     # Line Chart: Overall Score
     st.subheader("📈 Overall Score Over Time")
+    st.markdown("This score is our overall performance. This score entails how we are doing with having Quarterly POMs submitted on time, and how many outstanding Discharges we may have.")
     fig1, ax1 = plt.subplots()
     ax1.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], marker='o', color='green')
     ax1.set_xlabel("Date")
@@ -55,6 +56,7 @@ try:
 
     # Completed Chart
     st.subheader("✅ Completed Records")
+    st.markdown("This chart reflects how many POMs have been submitted and are 100% complete.")
     completed = df['Total Possible'] - df['Missing records']
     fig2a, ax2a = plt.subplots()
     ax2a.plot(df['DateLabel'], completed, marker='o', label='Completed', color='blue')
@@ -67,6 +69,7 @@ try:
 
     # Missing Chart
     st.subheader("❌ Missing Records")
+    st.markdown("This is the amount of records that are missing. Our goal is to be as close to zero as we can!")
     missing = df['Missing records']
     fig2b, ax2b = plt.subplots()
     ax2b.plot(df['DateLabel'], missing, marker='s', label='Missing', color='red')
@@ -79,6 +82,7 @@ try:
 
     # Combo Chart
     st.subheader("📉 Scorecard Metrics Over Time")
+    st.markdown("This graph compares two key metrics: our overall score based on completed POMs and discharges, and how well we are doing with timely report submissions. It helps us monitor trends and identify areas for improvement over time.")
     fig3, ax3 = plt.subplots()
     ax3.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], label='Overall Score Trend', marker='o', color='green')
     ax3.plot(df['DateLabel'], df['Required Reports Compliance'], label='MHO Discharges Over Time', marker='s')
