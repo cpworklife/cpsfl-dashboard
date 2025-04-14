@@ -80,8 +80,6 @@ try:
     plt.setp(ax2b.get_xticklabels(), rotation=45, ha='right')
     st.pyplot(fig2b)
 
-
-
     # Optional: Data preview
     with st.expander("🔍 View Raw Data"):
         st.dataframe(df)
