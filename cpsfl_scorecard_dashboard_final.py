@@ -80,21 +80,7 @@ try:
     plt.setp(ax2b.get_xticklabels(), rotation=45, ha='right')
     st.pyplot(fig2b)
 
-    # Combo Chart
-    st.subheader("📉 Scorecard Metrics Over Time")
-    st.markdown("This graph compares two key metrics: our overall score based on completed POMs and discharges, and how well we are doing with timely report submissions. It helps us monitor trends and identify areas for improvement over time.")
-    fig3, ax3 = plt.subplots()
-    ax3.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], label='Overall Score Trend', marker='o', color='green')
-    ax3.plot(df['DateLabel'], df['Required Reports Compliance'], label='MHO Discharges Over Time', marker='s')
-    ax3.set_ylim(60, 105)
-    ax3.set_yticks(range(60, 106, 5))
-    ax3.set_title("Key Metrics Comparison")
-    ax3.set_xlabel("Date")
-    ax3.set_ylabel("%")
-    ax3.legend()
-    ax3.grid(True)
-    plt.setp(ax3.get_xticklabels(), rotation=45, ha='right')
-    st.pyplot(fig3)
+
 
     # Optional: Data preview
     with st.expander("🔍 View Raw Data"):
