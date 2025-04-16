@@ -28,6 +28,8 @@ if dark_mode:
 
 st.title("📊 CPSFL Scorecard Dashboard")
 
+
+
 # Gauge-style Overview (custom half-circle gauges)
 def plot_gauge(title, value):
     fig, ax = plt.subplots(figsize=(4, 2.5))
@@ -142,12 +144,7 @@ try:
     with st.expander("🔍 View Raw Data"):
         st.dataframe(df)
 
-    # AI Summary of trends
-    st.subheader("🧠 AI Trend Summary")
-    avg_score = df['Overall % Completed (MHOs & Discharges)'].mean()
-    recent_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
-    trend = "📈 improving" if recent_score > avg_score else "📉 declining"
-    st.markdown(f"The overall score is currently at **{recent_score:.2f}%**, which is {trend} compared to the average of **{avg_score:.2f}%**.")
+
 
 except Exception as e:
     st.error(f"An error occurred while loading the Google Sheet: {e}")
