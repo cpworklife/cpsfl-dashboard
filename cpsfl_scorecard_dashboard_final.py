@@ -75,7 +75,7 @@ try:
         st.pyplot(plot_gauge("Overall Performance Measure", overall_perf_measure))
 
     # Line Chart: Overall Score
-    st.subheader("📈 Overall Score Over Time YTD")
+    st.subheader("📈 Overall Score YTD")
     st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges. This score reflects the percentage of POMs and Discharges that have been accurately completed to date. Below you will find a breakdown of how many were submitted and how many are still outstanding or past due.")
     fig1, ax1 = plt.subplots()
     ax1.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], marker='o', color='green')
@@ -92,7 +92,7 @@ try:
     completed = df['Total Possible'] - df['Missing records']
     fig2, ax2 = plt.subplots()
     ax2.plot(df['DateLabel'], completed, marker='o', label='Completed', color='green')
-    ax2.set_title("Completed Records Over Time")
+    ax2.set_title("Completed Records YTD")
     ax2.set_xlabel("Date")
     ax2.set_ylabel("Count")
     ax2.grid(True)
