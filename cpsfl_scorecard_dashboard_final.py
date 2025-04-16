@@ -66,7 +66,7 @@ try:
 
     latest_overall_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
     latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
-    overall_perf_measure = perf_df['Score'].iloc[-1]
+    overall_perf_measure = perf_df['Score'].dropna().iloc[-1]
 
     col1, col2, col3 = st.columns(3)
     with col1:
