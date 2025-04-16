@@ -76,7 +76,7 @@ try:
 
     # Line Chart: Overall Score
     st.subheader("📈 Overall Score YTD")
-    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges. This score reflects the percentage of POMs and Discharges that have been accurately completed to date. Below you will find a breakdown of how many were submitted and how many are still outstanding or past due.")
+    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges. This score reflects the percentage of POMs and Discharges that have been accurately completed to date. Below you will find a breakdown of how many were submitted and how many are still past due.")
     fig1, ax1 = plt.subplots()
     ax1.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], marker='o', color='green')
     ax1.set_xlabel("Date")
