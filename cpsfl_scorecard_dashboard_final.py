@@ -29,6 +29,7 @@ st.title("📊 CPSFL Scorecard Dashboard")
 
 # Load data directly from Google Sheets CSV link
 sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
+performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=0&single=true&output=csv"
 
 # Refresh button
 if st.button("🔄 Refresh Data"):
@@ -39,7 +40,7 @@ try:
 
     # Safely convert any values in Date to string before parsing
     df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
-    df = df.dropna(subset=['Date'])  # Drop any rows where date couldn't be parsed
+    df = df.dropna(subset=['Date'])
     df['DateLabel'] = df['Date'].dt.strftime('%-m/%-d')
 
     # Line Chart: Overall Score
@@ -59,7 +60,7 @@ try:
     st.markdown("This chart reflects how many POMs have been submitted and are 100% complete.")
     completed = df['Total Possible'] - df['Missing records']
     fig2a, ax2a = plt.subplots()
-    ax2a.plot(df['DateLabel'], completed, marker='o', label='Completed', color='blue')
+    ax2a.plot(df['DateLabel'], completed, marker='o', label='Completed', color='green')
     ax2a.set_title("Completed Records Over Time")
     ax2a.set_xlabel("Date")
     ax2a.set_ylabel("Count")
@@ -72,13 +73,40 @@ try:
     st.markdown("This is the amount of records that are missing. Our goal is to be as close to zero as we can!")
     missing = df['Missing records']
     fig2b, ax2b = plt.subplots()
-    ax2b.plot(df['DateLabel'], missing, marker='s', label='Missing', color='red')
+    ax2b.plot(df['DateLabel'], missing, marker='s', label='Missing', color='green')
     ax2b.set_title("Missing Records Over Time")
     ax2b.set_xlabel("Date")
     ax2b.set_ylabel("Count")
     ax2b.grid(True)
     plt.setp(ax2b.get_xticklabels(), rotation=45, ha='right')
     st.pyplot(fig2b)
+
+    # Reports Compliance Chart
+    st.subheader("📄 Required Contractual Reports Compliance")
+    st.markdown("*Total does NOT include items pending REVIEW. Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
+    fig3, ax3 = plt.subplots()
+    ax3.plot(df['DateLabel'], df['Required Reports Compliance'], marker='o', color='green')
+    ax3.set_xlabel("Date")
+    ax3.set_ylabel("Compliance %")
+    ax3.set_title("Contractual Reports Compliance Over Time")
+    ax3.grid(True)
+    plt.setp(ax3.get_xticklabels(), rotation=45, ha='right')
+    st.pyplot(fig3)
+
+    # Performance Measures Bar Chart
+    st.subheader("📊 Overall Performance Measures")
+    perf_df = pd.read_csv(performance_sheet_url)
+    perf_df['Label'] = perf_df['Measure'] + " - " + perf_df['Description']
+    fig4, ax4 = plt.subplots(figsize=(10, 6))
+    x = range(len(perf_df))
+    ax4.bar([i - 0.2 for i in x], perf_df['Score'], width=0.4, label='Score', color='green')
+    ax4.bar([i + 0.2 for i in x], perf_df['Target'], width=0.4, label='Target', color='gray')
+    ax4.set_xticks(x)
+    ax4.set_xticklabels(perf_df['Label'], rotation=45, ha='right', fontsize=8)
+    ax4.set_ylabel("Value")
+    ax4.set_title("Performance Measure Score vs Target")
+    ax4.legend()
+    st.pyplot(fig4)
 
     # Optional: Data preview
     with st.expander("🔍 View Raw Data"):
