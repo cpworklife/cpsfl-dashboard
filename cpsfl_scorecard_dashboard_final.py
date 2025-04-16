@@ -47,11 +47,7 @@ try:
     latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
     overall_perf_measure = perf_df['Score'].dropna().iloc[-1]
 
-    # Summary stats
-    st.markdown("### 🔢 Key Metrics (Latest Available)")
-    st.metric("Overall % Completed", f"{latest_overall_score:.1f}%")
-    st.metric("Required Reports Compliance", f"{latest_reports_compliance:.1f}%")
-    st.metric("Overall Performance Measure", f"{overall_perf_measure:.1f}%")
+    
 
     # Line Chart: Overall Score
     st.subheader("📈 Overall Score YTD")
