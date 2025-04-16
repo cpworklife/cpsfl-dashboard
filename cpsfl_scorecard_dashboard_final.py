@@ -33,8 +33,9 @@ if st.button("🔄 Refresh Data"):
     st.rerun()
 
 # You will need to define your sheet URLs here:
-sheet_url = "YOUR_FIRST_GOOGLE_SHEET_URL"
-performance_sheet_url = "YOUR_PERFORMANCE_SHEET_URL"
+sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=0&single=true&output=csv"
+performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
+
 
 # Dummy gauge plot function (replace with your actual gauge function)
 def plot_gauge(title, value):
