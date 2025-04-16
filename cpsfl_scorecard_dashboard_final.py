@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import io
-import numpy as np
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
@@ -28,9 +27,10 @@ if dark_mode:
 
 st.title("📊 CPSFL Scorecard Dashboard")
 
-# Gauge-style Overview (custom half-circle gauges)
-def plot_gauge(title, value):
-    fig, ax = plt.subplots(figsize=(3, 2))
+
+    # Gauge-style Overview (custom half-circle gauges)
+    def plot_gauge(title, value):
+    fig, ax = plt.subplots(figsize=(4, 2.5))
     theta = np.linspace(0, np.pi, 100)
     x = np.cos(theta)
     y = np.sin(theta)
@@ -42,12 +42,19 @@ def plot_gauge(title, value):
     fy = np.sin(filled_theta)
     ax.plot(fx, fy, color='green', linewidth=20)
 
-    ax.text(0, -0.1, f"{value:.2f}%", ha='center', va='center', fontsize=16, fontweight='bold')
-    ax.set_title(title, fontsize=12)
+    ax.text(0, -0.3, f"{value:.2f}%", ha='center', va='center', fontsize=18, fontweight='bold')
+    ax.set_title(title, fontsize=14)
     ax.set_aspect('equal')
     ax.axis('off')
     return fig
 
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.pyplot(plot_gauge("Overall % Completed", latest_overall_score))
+    with col2:
+        st.pyplot(plot_gauge("Required Reports Compliance", latest_reports_compliance))
+    with col3:
+        st.pyplot(plot_gauge("Overall Performance Measure", overall_perf_measure))
 sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
 performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
 
@@ -60,23 +67,10 @@ try:
     df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
     df = df.dropna(subset=['Date'])
     df['DateLabel'] = df['Date'].dt.strftime('%-m/%-d')
-    perf_df = pd.read_csv(performance_sheet_url)
-
-    latest_overall_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
-    latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
-    overall_perf_measure = perf_df['Score'].mean()
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.pyplot(plot_gauge("Overall % Completed", latest_overall_score))
-    with col2:
-        st.pyplot(plot_gauge("Required Reports Compliance", latest_reports_compliance))
-    with col3:
-        st.pyplot(plot_gauge("Overall Performance Measure", overall_perf_measure))
 
     # Line Chart: Overall Score
     st.subheader("📈 Overall Score Over Time YTD")
-    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges. This score reflects the percentage of POMs and Discharges that have been accurately completed to date. Below you will find a breakdown of how many were submitted and how many are still past due.")
+    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges. This score reflects the percentage of POMs and Discharges that have been accurately completed to date. Below you will find a breakdown of how many were submitted and how many are still outstanding or past due.")
     fig1, ax1 = plt.subplots()
     ax1.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], marker='o', color='green')
     ax1.set_xlabel("Date")
@@ -126,6 +120,7 @@ try:
 
     # Performance Measures Bar Chart
     st.subheader("📊 Overall Performance Measures")
+    perf_df = pd.read_csv(performance_sheet_url)
     perf_df['Label'] = perf_df['Measure'] + " - " + perf_df['Description']
     fig5, ax5 = plt.subplots(figsize=(10, 6))
     x = range(len(perf_df))
