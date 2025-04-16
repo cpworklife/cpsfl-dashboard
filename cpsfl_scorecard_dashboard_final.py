@@ -16,7 +16,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Dark mode toggle (simulated with background color swap)
+# Dark mode toggle
 dark_mode = st.toggle("🌙 Dark Mode")
 if dark_mode:
     st.markdown("""
@@ -36,15 +36,6 @@ if st.button("🔄 Refresh Data"):
 sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=0&single=true&output=csv"
 performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
 
-# Dummy gauge plot function (you can replace with a real one)
-def plot_gauge(title, value):
-    fig, ax = plt.subplots(figsize=(3, 1.5))
-    ax.barh([0], [value], color='green')
-    ax.set_xlim(0, 100)
-    ax.set_yticks([])
-    ax.set_title(f"{title}: {value:.1f}%", fontsize=10)
-    return fig
-
 try:
     df = pd.read_csv(sheet_url)
     df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
@@ -56,17 +47,15 @@ try:
     latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
     overall_perf_measure = perf_df['Score'].dropna().iloc[-1]
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.pyplot(plot_gauge("Overall % Completed", latest_overall_score))
-    with col2:
-        st.pyplot(plot_gauge("Required Reports Compliance", latest_reports_compliance))
-    with col3:
-        st.pyplot(plot_gauge("Overall Performance Measure", overall_perf_measure))
+    # Summary stats
+    st.markdown("### 🔢 Key Metrics (Latest Available)")
+    st.metric("Overall % Completed", f"{latest_overall_score:.1f}%")
+    st.metric("Required Reports Compliance", f"{latest_reports_compliance:.1f}%")
+    st.metric("Overall Performance Measure", f"{overall_perf_measure:.1f}%")
 
     # Line Chart: Overall Score
     st.subheader("📈 Overall Score YTD")
-    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges. This score reflects the percentage of POMs and Discharges that have been accurately completed to date. Below you will find a breakdown of how many were submitted and how many are still past due.")
+    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges.")
     fig1, ax1 = plt.subplots()
     ax1.plot(df['DateLabel'], df['Overall % Completed (MHOs & Discharges)'], marker='o', color='green')
     ax1.set_xlabel("Date")
@@ -81,7 +70,7 @@ try:
     st.markdown("This is the amount of POMs (MHOs) that have been submitted since January.")
     completed = df['Total Possible'] - df['Missing records']
     fig2, ax2 = plt.subplots()
-    ax2.plot(df['DateLabel'], completed, marker='o', label='Completed', color='green')
+    ax2.plot(df['DateLabel'], completed, marker='o', color='green')
     ax2.set_title("Completed Records YTD")
     ax2.set_xlabel("Date")
     ax2.set_ylabel("Count")
@@ -94,7 +83,7 @@ try:
     st.markdown("This is the amount of records that are missing. Our goal is to be as close to zero as we can!")
     missing = df['Missing records']
     fig3, ax3 = plt.subplots()
-    ax3.plot(df['DateLabel'], missing, marker='s', label='Missing', color='green')
+    ax3.plot(df['DateLabel'], missing, marker='s', color='green')
     ax3.set_title("Missing Records YTD")
     ax3.set_xlabel("Date")
     ax3.set_ylabel("Count")
@@ -104,7 +93,7 @@ try:
 
     # Reports Compliance Chart
     st.subheader("📄 Required Contractual Reports Compliance")
-    st.markdown("*Total does NOT include items pending REVIEW. Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
+    st.markdown("*Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
     fig4, ax4 = plt.subplots()
     ax4.plot(df['DateLabel'], df['Required Reports Compliance'], marker='o', color='green')
     ax4.set_xlabel("Date")
