@@ -27,6 +27,19 @@ if dark_mode:
 
 st.title("📊 CPSFL Scorecard Dashboard")
 
+    # Gauge-style Overview (dynamic values)
+    latest_overall_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
+    latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
+    overall_perf_measure = perf_df['Score'].mean()
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Overall % Completed", value=f"{latest_overall_score:.2f}%")
+    with col2:
+        st.metric(label="Required Reports Compliance", value=f"{latest_reports_compliance:.2f}%")
+    with col3:
+        st.metric(label="Overall Performance Measure", value=f"{overall_perf_measure:.2f}%")
+
 # Load data directly from Google Sheets CSV link
 sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
 performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
