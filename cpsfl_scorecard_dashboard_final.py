@@ -36,33 +36,7 @@ if st.button("🔄 Refresh Data"):
 sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=0&single=true&output=csv"
 performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
 
-# Dummy gauge plot function (you can replace with a real one)
-def plot_gauge(title, value):
-    fig, ax = plt.subplots(figsize=(3, 1.5))
-    ax.barh([0], [value], color='green')
-    ax.set_xlim(0, 100)
-    ax.set_yticks([])
-    ax.set_title(f"{title}: {value:.1f}%", fontsize=10)
-    return fig
 
-try:
-    df = pd.read_csv(sheet_url)
-    df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
-    df = df.dropna(subset=['Date'])
-    df['DateLabel'] = df['Date'].dt.strftime('%-m/%-d')
-    perf_df = pd.read_csv(performance_sheet_url)
-
-    latest_overall_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
-    latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
-    overall_perf_measure = perf_df['Score'].dropna().iloc[-1]
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.pyplot(plot_gauge("Overall % Completed", latest_overall_score))
-    with col2:
-        st.pyplot(plot_gauge("Required Reports Compliance", latest_reports_compliance))
-    with col3:
-        st.pyplot(plot_gauge("Overall Performance Measure", overall_perf_measure))
 
     # Line Chart: Overall Score
     st.subheader("📈 Overall Score YTD")
