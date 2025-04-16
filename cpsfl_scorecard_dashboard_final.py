@@ -28,14 +28,7 @@ if dark_mode:
 st.title("📊 CPSFL Scorecard Dashboard")
 
 # Load data directly from Google Sheets CSV link
-sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
-performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
 
-# Refresh button
-if st.button("🔄 Refresh Data"):
-    st.rerun()
-
-try:
     df = pd.read_csv(sheet_url)
     df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
     df = df.dropna(subset=['Date'])
