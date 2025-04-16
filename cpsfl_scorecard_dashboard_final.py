@@ -66,7 +66,9 @@ try:
 
     latest_overall_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
     latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
-    overall_perf_measure = perf_df['Score'].dropna().iloc[-1]
+    sheet1_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRW3e5OB0urjbl6byFS2TkqUJGv7-xgb5kPBZUEKe3EyG9d5tML9MzBhVDLZzZAcBZAzPUZhReLbHR4/pub?gid=0&single=true&output=csv"
+overall_perf_measure = pd.read_csv(sheet1_url)['Score'].dropna().iloc[-1]
+
 
     col1, col2, col3 = st.columns(3)
     with col1:
