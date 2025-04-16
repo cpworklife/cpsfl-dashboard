@@ -64,7 +64,8 @@ try:
     df = df.dropna(subset=['Date'])
     df['DateLabel'] = df['Date'].dt.strftime('%-m/%-d')
     perf_df = pd.read_csv(performance_sheet_url)
-    overall_perf_measure = pd.read_csv(sheet1_url)['Score'].dropna().iloc[-1]
+    overall_perf_measure = pd.read_csv(sheet1_url)['Overall Performance Measure'].dropna().iloc[-1]
+
 
     latest_overall_score = df['Overall % Completed (MHOs & Discharges)'].iloc[-1]
     latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
