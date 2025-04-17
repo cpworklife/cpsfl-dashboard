@@ -37,23 +37,32 @@ sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xi
 performance_sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=460550068&single=true&output=csv"
 
 try:
-    # Load Sheet 1 values for progress bars
-    sheet1_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
-    sheet1_df = pd.read_csv(sheet1_url)
-    overall_completed = sheet1_df.iloc[-1, 1]
-    required_compliance = sheet1_df.iloc[-1, 2]
-    overall_performance = sheet1_df.iloc[-1, 3]
+   # Load Sheet 1 values for progress bars
+sheet1_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
+sheet1_df = pd.read_csv(sheet1_url)
+overall_completed = sheet1_df.iloc[-1, 1]
+required_compliance = sheet1_df.iloc[-1, 2]
+overall_performance = sheet1_df.iloc[-1, 3]
 
-    st.subheader("📌 Key Metrics Overview")
-    metrics = {
-        "Overall % Completed": overall_completed,
-        "Required Reports Compliance": required_compliance,
-        "Overall Performance Measure": overall_performance
-    }
+st.subheader("📌 Key Metrics Overview")
+metrics = {
+    "Overall % Completed": overall_completed,
+    "Required Reports Compliance": required_compliance,
+    "Overall Performance Measure": overall_performance
+}
 
-    for title, value in metrics.items():
-        st.markdown(f"**{title}: {value:.1f}%**")
-        st.progress(min(int(value), 100))
+# Use custom green bar for each using HTML/CSS
+for title, value in metrics.items():
+    percent = min(float(value), 100)
+    st.markdown(f"""
+    <div style='margin-bottom: 10px;'>
+        <strong>{title}: {percent:.1f}%</strong>
+        <div style='background-color: #ddd; border-radius: 20px; height: 20px; width: 100%;'>
+            <div style='width: {percent}%; background-color: #4CAF50; height: 100%; border-radius: 20px;'></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
     df = pd.read_csv(sheet_url)
     df['Date'] = pd.to_datetime(df['Date'].astype(str), errors='coerce')
