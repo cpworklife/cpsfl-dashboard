@@ -100,7 +100,7 @@ try:
 
     # Missing Records Chart
     st.subheader("❌ Missing Records")
-    st.markdown("This is the amount of records that are missing. Our goal is to be as close to zero as we can!")
+    st.markdown("This is the amount of records that are missing. The downtrend in this instance is postive as this reflects that the amount of missing records is going down. Our goal is to be as close to zero as we can!")
     missing = df['Missing records']
     fig3, ax3 = plt.subplots()
     ax3.plot(df['DateLabel'], missing, marker='s', color='green')
