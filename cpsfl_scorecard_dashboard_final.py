@@ -125,7 +125,9 @@ try:
 
     # Performance Measures Bar Chart
     st.subheader("📊 Overall Performance Measures")
-    perf_df['Label'] = perf_df['Measure'] + " - " + perf_df['Description']
+   # Split the long descriptions into two lines
+    perf_df['Label'] = perf_df['Measure'] + "\\n" + perf_df['Description']
+
     fig5, ax5 = plt.subplots(figsize=(10, 6))
     x = range(len(perf_df))
     ax5.bar([i - 0.2 for i in x], perf_df['Score'], width=0.4, label='Score', color='green')
