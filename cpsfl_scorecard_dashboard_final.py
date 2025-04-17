@@ -47,6 +47,28 @@ try:
     latest_reports_compliance = df['Required Reports Compliance'].iloc[-1]
     overall_perf_measure = perf_df['Score'].dropna().iloc[-1]
 
+# Load Sheet 1 data (just once)
+sheet1_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
+sheet1_df = pd.read_csv(sheet1_url)
+
+# Get latest values from the last row
+overall_completed = sheet1_df.iloc[-1, 1]
+required_compliance = sheet1_df.iloc[-1, 2]
+overall_performance = sheet1_df.iloc[-1, 3]
+
+# Display as loading-style bars
+st.subheader("📌 Key Metrics Overview")
+metrics = {
+    "Overall % Completed": overall_completed,
+    "Required Reports Compliance": required_compliance,
+    "Overall Performance Measure": overall_performance
+}
+
+for title, value in metrics.items():
+    st.markdown(f"**{title}: {value:.1f}%**")
+    st.progress(min(int(value), 100))
+
+
     
 
     # Line Chart: Overall Score
