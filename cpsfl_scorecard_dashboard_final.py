@@ -5,7 +5,7 @@ import numpy as np
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
-st.title("CPSFL Scorecard Dashboard")
+st.title("🌟 CPSFL Scorecard Dashboard")
 st.markdown("Thriving Residents. Strong Communities.")
 
 # Sheet setup
@@ -23,16 +23,16 @@ def load_sheet(gid):
     url = base_url.format(gid=gid)
     return pd.read_csv(url)
 
-# SECTION 1 – Required Reports Compliance Breakdown
-st.header("📊 Required Reports Compliance Breakdown")
+# SECTION 1 – Summary Metrics
+st.header("📊 Summary Metrics")
 try:
-    summary_df = load_sheet(tabs["Required Reports Compliance Breakdown"])
+    summary_df = load_sheet(tabs["Summary Metrics"])
     st.dataframe(summary_df)
 except Exception as e:
-    st.error(f"Error loading Reports Compliance Breakdown: {e}")
+    st.error(f"Error loading Summary Metrics: {e}")
 
 # SECTION 2 – Overall Score Breakdown
-st.header("📈 Overall performance Measure Breakdown. The following statistics are interconnected and should be viewed as a unified set.")
+st.header("📈 Overall Score Breakdown")
 try:
     overall_df = load_sheet(tabs["Overall Score Breakdown"])
     st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges.")
@@ -44,7 +44,7 @@ except Exception as e:
 st.header("📄 Reports Compliance Breakdown")
 try:
     reports_df = load_sheet(tabs["Reports Compliance Breakdown"])
-    st.markdown("*Required Contractual Reports Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items..*")
+    st.markdown("*Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
     st.dataframe(reports_df)
 except Exception as e:
     st.error(f"Error loading Reports Compliance Breakdown: {e}")
@@ -56,7 +56,6 @@ try:
     st.dataframe(perf_df)
 except Exception as e:
     st.error(f"Error loading Performance Measure Breakdown: {e}")
-
 
 
 # SECTION 5 – Waitlist Overview
