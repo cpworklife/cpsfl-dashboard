@@ -23,16 +23,16 @@ def load_sheet(gid):
     url = base_url.format(gid=gid)
     return pd.read_csv(url)
 
-# SECTION 1 – Summary Metrics
-st.header("📊 Summary Metrics")
+# SECTION 1 – Required Reports Compliance Breakdown
+st.header("📊 Required Reports Compliance Breakdown")
 try:
-    summary_df = load_sheet(tabs["Summary Metrics"])
+    summary_df = load_sheet(tabs["Required Reports Compliance Breakdown"])
     st.dataframe(summary_df)
 except Exception as e:
-    st.error(f"Error loading Summary Metrics: {e}")
+    st.error(f"Error loading Required Reports Compliance Breakdown: {e}")
 
 # SECTION 2 – Overall Score Breakdown
-st.header("📈 Overall Score Breakdown")
+st.header("📈 Overall performance Measure Breakdown. The following statistics are interconnected and should be viewed as a unified set.")
 try:
     overall_df = load_sheet(tabs["Overall Score Breakdown"])
     st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges.")
