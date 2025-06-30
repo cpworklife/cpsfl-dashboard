@@ -53,7 +53,7 @@ try:
 
         col1, col2, col3 = st.columns(3)
         col1.metric("Total Possible Records", df.iloc[-1]['Total Possible'])
-        col2.metric("Actual Records", df.iloc[-1]['Total Complete'])
+        col2.metric("Actual Records", df.iloc[-1]['Total Records Completed'])
         col3.metric("Records Missing", df.iloc[-1]['Missing records'])
 
         st.divider()
