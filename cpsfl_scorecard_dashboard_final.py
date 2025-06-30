@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
@@ -22,21 +20,16 @@ tabs = {
     "Waitlist by Program": 1961299205
 }
 
+def load_sheet(gid):
+    url = base_url.format(gid=gid)
+    df = pd.read_csv(url)
+    df.columns = df.columns.str.strip()  # Clean up column names
+    return df.reset_index(drop=True)
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
-    summary_df["Score"] = summary_df["Score"].str.replace("%", "").astype(float)
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.pyplot(block_progress_chart(summary_df.loc[0, "Score"], summary_df.loc[0, "Description"]))
-    with col2:
-        st.pyplot(block_progress_chart(summary_df.loc[1, "Score"], summary_df.loc[1, "Description"]))
-    with col3:
-        st.pyplot(block_progress_chart(summary_df.loc[2, "Score"], summary_df.loc[2, "Description"]))
-
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
