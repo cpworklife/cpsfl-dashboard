@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
-import plotly.graph_objects as go
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
@@ -25,34 +25,25 @@ tabs = {
 def load_sheet(gid):
     url = base_url.format(gid=gid)
     df = pd.read_csv(url)
-    df.columns = df.columns.str.strip()  # Clean column names
+    df.columns = df.columns.str.strip()
     return df.reset_index(drop=True)
 
-# Plotly gauge function
-def plot_gauge(value, label):
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=value,
-        title={'text': label, 'font': {'size': 18}},
-        number={'suffix': "%", 'font': {'size': 24}},
-        gauge={
-            'shape': "angular",
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkgray"},
-            'bar': {'color': "green"},
-            'bgcolor': "white",
-            'steps': [
-                {'range': [0, 50], 'color': "#e6f2e6"},
-                {'range': [50, 75], 'color': "#c2e0c2"},
-                {'range': [75, 100], 'color': "#85d185"}
-            ],
-            'threshold': {
-                'line': {'color': "black", 'width': 4},
-                'thickness': 0.75,
-                'value': value
-            }
-        }
-    ))
-    fig.update_layout(margin=dict(l=10, r=10, t=40, b=0), height=250)
+def block_progress_chart(score, label, size=10):
+    filled_blocks = int(round(score))
+    total_blocks = size * size
+
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
+    for i in range(total_blocks):
+        row = i // size
+        col = i % size
+        color = 'green' if i < filled_blocks else 'lightgray'
+        ax.add_patch(plt.Rectangle((col, size - 1 - row), 1, 1, color=color))
+
+    ax.set_xlim(0, size)
+    ax.set_ylim(0, size)
+    ax.set_aspect('equal')
+    ax.axis('off')
+    ax.set_title(f"{label}\n{score:.2f}%", fontsize=12)
     return fig
 
 # SECTION 1 – Summary Metrics
@@ -63,14 +54,13 @@ try:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.plotly_chart(plot_gauge(summary_df.loc[0, "Score"], summary_df.loc[0, "Description"]), use_container_width=True)
+        st.pyplot(block_progress_chart(summary_df.loc[0, "Score"], summary_df.loc[0, "Description"]))
     with col2:
-        st.plotly_chart(plot_gauge(summary_df.loc[1, "Score"], summary_df.loc[1, "Description"]), use_container_width=True)
+        st.pyplot(block_progress_chart(summary_df.loc[1, "Score"], summary_df.loc[1, "Description"]))
     with col3:
-        st.plotly_chart(plot_gauge(summary_df.loc[2, "Score"], summary_df.loc[2, "Description"]), use_container_width=True)
+        st.pyplot(block_progress_chart(summary_df.loc[2, "Score"], summary_df.loc[2, "Description"]))
 
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
-
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
 
