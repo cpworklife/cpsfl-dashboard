@@ -44,7 +44,7 @@ except Exception as e:
 st.header("📄 Reports Compliance Breakdown")
 try:
     reports_df = load_sheet(tabs["Reports Compliance Breakdown"])
-    st.markdown("*Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
+    st.markdown("*Required Contractual Reports Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items..*")
     st.dataframe(reports_df)
 except Exception as e:
     st.error(f"Error loading Reports Compliance Breakdown: {e}")
