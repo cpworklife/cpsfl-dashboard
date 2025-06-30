@@ -25,13 +25,7 @@ def load_sheet(gid):
     url = base_url.format(gid=gid)
     return pd.read_csv(url)
 
-# SECTION 1 – Summary Metrics
-st.header("📊 Summary Metrics")
-try:
-    summary_df = load_sheet(tabs["Summary Metrics"])
-    st.dataframe(summary_df, use_container_width=True, hide_index=True)
-except Exception as e:
-    st.error(f"Error loading Summary Metrics: {e}")
+
 
 # SECTION 2 – Overall Score Breakdown
 st.header("📈 Overall Score Breakdown")
