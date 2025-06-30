@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
@@ -24,21 +25,25 @@ tabs = {
 def load_sheet(gid):
     url = base_url.format(gid=gid)
     df = pd.read_csv(url)
-    df.columns = df.columns.str.strip()
-    return df
+    df.columns = df.columns.str.strip()  # Clean column names
+    return df.reset_index(drop=True)
 
+# Plotly gauge function
 def plot_gauge(value, label):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        title={'text': label},
+        title={'text': label, 'font': {'size': 18}},
+        number={'suffix': "%", 'font': {'size': 24}},
         gauge={
-            'axis': {'range': [0, 100]},
+            'shape': "angular",
+            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkgray"},
             'bar': {'color': "green"},
+            'bgcolor': "white",
             'steps': [
-                {'range': [0, 50], 'color': "#d6f5d6"},
-                {'range': [50, 75], 'color': "#a3e4a3"},
-                {'range': [75, 100], 'color': "#60c060"}
+                {'range': [0, 50], 'color': "#e6f2e6"},
+                {'range': [50, 75], 'color': "#c2e0c2"},
+                {'range': [75, 100], 'color': "#85d185"}
             ],
             'threshold': {
                 'line': {'color': "black", 'width': 4},
@@ -47,7 +52,7 @@ def plot_gauge(value, label):
             }
         }
     ))
-    fig.update_layout(margin=dict(l=20, r=20, t=50, b=0), height=250)
+    fig.update_layout(margin=dict(l=10, r=10, t=40, b=0), height=250)
     return fig
 
 # SECTION 1 – Summary Metrics
@@ -65,6 +70,7 @@ try:
         st.plotly_chart(plot_gauge(summary_df.loc[2, "Score"], summary_df.loc[2, "Description"]), use_container_width=True)
 
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
 
