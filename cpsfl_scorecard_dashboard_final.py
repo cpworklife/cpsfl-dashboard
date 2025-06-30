@@ -25,37 +25,39 @@ tabs = {
 def load_sheet(gid):
     url = base_url.format(gid=gid)
     df = pd.read_csv(url)
-    df.columns = df.columns.str.strip()  # Clean column names
+    df.columns = df.columns.str.strip()
     return df.reset_index(drop=True)
 
-# Half-circle gauge function with labels and percentage
 def half_circle_gauge(value, label):
-    fig, ax = plt.subplots(figsize=(3.5, 2.2), subplot_kw={'projection': 'polar'})
-    theta = np.linspace(0, np.pi, 100)
-    ax.plot(theta, [1]*100, color='lightgray', linewidth=20)
-    filled_len = int(len(theta) * value / 100)
-    ax.plot(theta[:filled_len], [1]*filled_len, color='green', linewidth=20)
+    fig, ax = plt.subplots(figsize=(3, 2), subplot_kw={'projection': 'polar'})
+    theta = np.linspace(np.pi, 2 * np.pi, 100)
+    
+    ax.bar(theta, [1]*len(theta), width=np.pi/100, color='lightgray', bottom=0.5)
+    
+    filled_theta = np.linspace(np.pi, np.pi + (value / 100.0) * np.pi, 100)
+    ax.bar(filled_theta, [1]*len(filled_theta), width=np.pi/100, color='green', bottom=0.5)
+
     ax.set_yticklabels([])
     ax.set_xticklabels([])
-    ax.set_theta_zero_location("E")  # Right side start
-    ax.set_theta_direction(-1)
-    ax.set_rlim(0, 1.1)
-    ax.set_facecolor("white")
     ax.grid(False)
-    ax.text(0, 0.2, f"{value:.2f}", ha='center', va='center', fontsize=16, fontweight='bold')
-    ax.text(0, -0.1, "%", ha='center', va='center', fontsize=10)
-    ax.set_title(label, va='bottom', fontsize=10, pad=20)
+    ax.set_theta_zero_location("W")
+    ax.set_theta_direction(-1)
+    ax.set_rlim(0, 1.5)
+
+    # Add label above
+    ax.set_title(label, va='bottom', fontsize=10)
+
+    # Add percentage text inside
+    ax.text(0, 0, f"{value:.2f}%", fontsize=12, fontweight='bold', ha='center', va='center')
+
     return fig
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
+    summary_df["Score"] = summary_df["Score"].str.replace("%", "").astype(float)
 
-    # Clean Score column (remove % and convert to float)
-    summary_df["Score"] = summary_df["Score"].astype(str).str.replace("%", "").astype(float)
-
-    # Half-circle gauges
     col1, col2, col3 = st.columns(3)
     with col1:
         st.pyplot(half_circle_gauge(summary_df.loc[0, "Score"], summary_df.loc[0, "Description"]))
