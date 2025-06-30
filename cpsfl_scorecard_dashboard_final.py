@@ -24,45 +24,48 @@ tabs = {
 
 def load_sheet(gid):
     url = base_url.format(gid=gid)
-    return pd.read_csv(url).reset_index(drop=True)
+    df = pd.read_csv(url)
+    df.columns = df.columns.str.strip()  # Clean up column names
+    return df.reset_index(drop=True)
 
-def draw_gauge(value, label):
-    fig, ax = plt.subplots(figsize=(2.8, 1.5), subplot_kw={'projection': 'polar'})
-    theta = np.linspace(0.0, np.pi, 100)
-    radii = np.ones(100)
-    ax.plot(theta, radii, color='white', lw=0)
-    ax.bar(theta, radii, width=np.pi / 100, color='#00cc44')
-
-    # White background for unfilled portion
-    cutoff = int(value)
-    ax.bar(theta[cutoff:], radii[cutoff:], width=np.pi / 100, color='lightgray')
-
-    # Remove grid and axis
-    ax.set_axis_off()
-    ax.set_ylim(0, 1.1)
-
-    # Add the value in center
-    ax.text(0, -0.3, f"{value:.2f}", fontsize=16, ha='center', va='center', fontweight='bold')
-    ax.text(0, -0.55, "%", fontsize=10, ha='center', va='center')
-    ax.set_title(label, va='bottom', fontsize=10)
+def half_circle_gauge(value, label):
+    fig, ax = plt.subplots(figsize=(3, 2), subplot_kw={'projection': 'polar'})
+    theta = np.linspace(np.pi, 2 * np.pi, 100)
+    ax.plot(theta, [1]*100, color='lightgray', linewidth=20)
+    filled = int(value)
+    ax.plot(theta[:filled], [1]*filled, color='green', linewidth=20)
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.set_title(f"{label}\n{value}%", fontsize=10)
+    ax.set_facecolor("white")
+    ax.grid(False)
+    ax.set_theta_zero_location("W")
+    ax.set_theta_direction(-1)
+    ax.set_rlim(0, 1.1)
     return fig
 
 # SECTION 1 – Summary Metrics
-st.header("\U0001F4CA Summary Metrics")
+st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
-    
-    # Check if 'Description' column is present
-    required_cols = ["Description", "Score", "Detailed Description"]
-    missing_cols = [col for col in required_cols if col not in summary_df.columns]
-    
-    if missing_cols:
-        st.error(f"Missing columns in Summary Metrics: {missing_cols}")
-        st.write("Available columns:", summary_df.columns.tolist())
-    else:
-        st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
+    # Half-circle gauges
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        score1 = int(summary_df.loc[0, "Score"])
+        st.pyplot(half_circle_gauge(score1, summary_df.loc[0, "Description"]))
+    with col2:
+        score2 = int(summary_df.loc[1, "Score"])
+        st.pyplot(half_circle_gauge(score2, summary_df.loc[1, "Description"]))
+    with col3:
+        score3 = int(summary_df.loc[2, "Score"])
+        st.pyplot(half_circle_gauge(score3, summary_df.loc[2, "Description"]))
+
+    st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
+
 
 
 # SECTION 2 – Overall Score Breakdown
