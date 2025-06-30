@@ -48,27 +48,22 @@ def draw_gauge(value, label):
     return fig
 
 # SECTION 1 – Summary Metrics
-st.header("📊 Summary Metrics")
+st.header("\U0001F4CA Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
-
-    # Show 3 gauge visualizations
-    metrics = summary_df.iloc[0:3]
-    labels = metrics["Description"].tolist()
-    values = metrics["Score"].tolist()
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.pyplot(draw_gauge(values[0], labels[0]))
-    with col2:
-        st.pyplot(draw_gauge(values[1], labels[1]))
-    with col3:
-        st.pyplot(draw_gauge(values[2], labels[2]))
-
-    # Show the full table below
-    st.dataframe(summary_df, use_container_width=True, hide_index=True)
+    
+    # Check if 'Description' column is present
+    required_cols = ["Description", "Score", "Detailed Description"]
+    missing_cols = [col for col in required_cols if col not in summary_df.columns]
+    
+    if missing_cols:
+        st.error(f"Missing columns in Summary Metrics: {missing_cols}")
+        st.write("Available columns:", summary_df.columns.tolist())
+    else:
+        st.dataframe(summary_df, use_container_width=True, hide_index=True)
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
+
 
 # SECTION 2 – Overall Score Breakdown
 st.header("📈 Overall Score Breakdown")
