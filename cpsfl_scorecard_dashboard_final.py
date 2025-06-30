@@ -25,18 +25,20 @@ tabs = {
 def load_sheet(gid):
     url = base_url.format(gid=gid)
     df = pd.read_csv(url)
-    df.columns = df.columns.str.strip()  # Clean up column names
+    df.columns = df.columns.str.strip()
     return df.reset_index(drop=True)
 
 def half_circle_gauge(value, label):
     fig, ax = plt.subplots(figsize=(3, 2), subplot_kw={'projection': 'polar'})
     theta = np.linspace(np.pi, 2 * np.pi, 100)
     ax.plot(theta, [1]*100, color='lightgray', linewidth=20)
-    filled = int(value)
-    ax.plot(theta[:filled], [1]*filled, color='green', linewidth=20)
+
+    percent_fill = int((value / 100) * 100)
+    ax.plot(theta[:percent_fill], [1]*percent_fill, color='green', linewidth=20)
+
     ax.set_yticklabels([])
     ax.set_xticklabels([])
-    ax.set_title(f"{label}\n{value}%", fontsize=10)
+    ax.set_title(f"{label}\n{value:.1f}%", fontsize=10)
     ax.set_facecolor("white")
     ax.grid(False)
     ax.set_theta_zero_location("W")
@@ -48,11 +50,8 @@ def half_circle_gauge(value, label):
 st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
+    summary_df["Score"] = summary_df["Score"].astype(float)
 
-     # Clean Score column (remove % and convert to float)
-    summary_df["Score"] = summary_df["Score"].str.replace("%", "").astype(float)
-
-    # Half-circle gauges
     col1, col2, col3 = st.columns(3)
     with col1:
         score1 = summary_df.loc[0, "Score"]
@@ -64,13 +63,9 @@ try:
         score3 = summary_df.loc[2, "Score"]
         st.pyplot(half_circle_gauge(score3, summary_df.loc[2, "Description"]))
 
-
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
-
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
-
-
 
 # SECTION 2 – Overall Score Breakdown
 st.header("📈 Overall Score Breakdown")
