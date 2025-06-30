@@ -2,82 +2,84 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import urllib.request
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
-# Custom CSS to center header and style
-st.markdown("""
-    <style>
-        .centered-title {
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-        .subtitle {
-            text-align: center;
-            font-size: 20px;
-            color: #2E7D32;
-            margin-bottom: 30px;
-        }
-    </style>
-""", unsafe_allow_html=True)
+st.title("🌟 CPSFL Scorecard Dashboard")
+st.markdown("Thriving Residents. Strong Communities.")
 
-st.markdown("<div class='centered-title'>CPSFL Scorecard Dashboard</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Thriving Residents. Strong Communities.</div>", unsafe_allow_html=True)
-
-# Helper function to load Google Sheet CSV
-@st.cache_data
-def load_sheet(url):
-    return pd.read_csv(url)
-
-# Google Sheets published URLs (CSV links)
+# Sheet setup
+base_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid={gid}&single=true&output=csv"
 tabs = {
-    "Summary Metrics": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=965565385&single=true&output=csv",
-    "Overall Score Breakdown": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=209468973&single=true&output=csv",
-    "Reports Compliance Breakdown": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=467511660&single=true&output=csv",
-    "Performance Measure Breakdown": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=401432916&single=true&output=csv",
-    "Waitlist Overview": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=869606256&single=true&output=csv",
-    "Waitlist by Program": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?gid=1961299205&single=true&output=csv"
+    "Summary Metrics": 965565385,
+    "Overall Score Breakdown": 209468973,
+    "Reports Compliance Breakdown": 467511660,
+    "Performance Measure Breakdown": 401432916,
+    "Waitlist Overview": 869606256,
+    "Waitlist by Program": 1961299205
 }
 
-# Load summary metrics
+def load_sheet(gid):
+    url = base_url.format(gid=gid)
+    return pd.read_csv(url)
+
+# SECTION 1 – Summary Metrics
+st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
-    summary_df = summary_df.drop(columns=summary_df.columns[0], errors='ignore')  # Remove line number columns if present
-
-    # Half-circle gauge chart function
-    def plot_half_circle(title, value):
-        fig, ax = plt.subplots(figsize=(3.5, 2.5))
-        theta = np.linspace(-np.pi, 0, 100)
-        x = np.cos(theta)
-        y = np.sin(theta)
-        ax.plot(x, y, color='lightgray', linewidth=20, solid_capstyle='round')
-
-        end_angle = (-np.pi) + (value / 100.0) * np.pi
-        filled_theta = np.linspace(-np.pi, end_angle, 100)
-        fx = np.cos(filled_theta)
-        fy = np.sin(filled_theta)
-        ax.plot(fx, fy, color='green', linewidth=20, solid_capstyle='round')
-
-        ax.text(0, -0.2, f"{value:.1f}%", ha='center', va='center', fontsize=16, fontweight='bold')
-        ax.set_title(title, fontsize=12)
-        ax.set_aspect('equal')
-        ax.axis('off')
-        return fig
-
-    # Display 3 half-circle gauges
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        val1 = summary_df['Overall % Completed'].dropna().iloc[-1]
-        st.pyplot(plot_half_circle("Overall % Completed", val1))
-    with col2:
-        val2 = summary_df['Required Reports Compliance'].dropna().iloc[-1]
-        st.pyplot(plot_half_circle("Required Reports Compliance", val2))
-    with col3:
-        val3 = summary_df['Overall Performance Measure'].dropna().iloc[-1]
-        st.pyplot(plot_half_circle("Overall Performance Measure", val3))
-
+    st.dataframe(summary_df)
 except Exception as e:
-    st.error(f"Error loading data: {e}")
+    st.error(f"Error loading Summary Metrics: {e}")
+
+# SECTION 2 – Overall Score Breakdown
+st.header("📈 Overall Score Breakdown")
+try:
+    overall_df = load_sheet(tabs["Overall Score Breakdown"])
+    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges.")
+    st.dataframe(overall_df)
+except Exception as e:
+    st.error(f"Error loading Overall Score Breakdown: {e}")
+
+# SECTION 3 – Reports Compliance Breakdown
+st.header("📄 Reports Compliance Breakdown")
+try:
+    reports_df = load_sheet(tabs["Reports Compliance Breakdown"])
+    st.markdown("*Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
+    st.dataframe(reports_df)
+except Exception as e:
+    st.error(f"Error loading Reports Compliance Breakdown: {e}")
+
+# SECTION 4 – Performance Measure Breakdown
+st.header("📊 Performance Measure Breakdown")
+try:
+    perf_df = load_sheet(tabs["Performance Measure Breakdown"])
+    perf_df['Label'] = perf_df['Measure'] + "\n" + perf_df['Description']
+    fig, ax = plt.subplots(figsize=(10, 6))
+    x = range(len(perf_df))
+    ax.bar([i - 0.2 for i in x], perf_df['Score'], width=0.4, label='Score', color='green')
+    ax.bar([i + 0.2 for i in x], perf_df['Target'], width=0.4, label='Target', color='gray')
+    ax.set_xticks(x)
+    ax.set_xticklabels(perf_df['Label'], rotation=45, ha='right', fontsize=8)
+    ax.set_ylabel("Value")
+    ax.set_title("Performance Measures vs Targets")
+    ax.legend()
+    st.pyplot(fig)
+except Exception as e:
+    st.error(f"Error loading Performance Measure Breakdown: {e}")
+
+
+# SECTION 5 – Waitlist Overview
+st.header("⏳ Waitlist Overview")
+try:
+    waitlist_df = load_sheet(tabs["Waitlist Overview"])
+    st.dataframe(waitlist_df)
+except Exception as e:
+    st.error(f"Error loading Waitlist Overview: {e}")
+
+# SECTION 6 – Waitlist by Program
+st.header("🏥 Waitlist by Program")
+try:
+    waitlist_prog_df = load_sheet(tabs["Waitlist by Program"])
+    st.dataframe(waitlist_prog_df)
+except Exception as e:
+    st.error(f"Error loading Waitlist by Program: {e}")
