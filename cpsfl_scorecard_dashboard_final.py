@@ -29,7 +29,7 @@ try:
     summary_df = load_sheet(tabs["Required Reports Compliance Breakdown"])
     st.dataframe(summary_df)
 except Exception as e:
-    st.error(f"Error loading Required Reports Compliance Breakdown: {e}")
+    st.error(f"Error loading Reports Compliance Breakdown: {e}")
 
 # SECTION 2 – Overall Score Breakdown
 st.header("📈 Overall performance Measure Breakdown. The following statistics are interconnected and should be viewed as a unified set.")
