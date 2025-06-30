@@ -5,7 +5,7 @@ import numpy as np
 
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
-st.title("🌟 CPSFL Scorecard Dashboard")
+st.title("CPSFL Scorecard Dashboard")
 st.markdown("Thriving Residents. Strong Communities.")
 
 # Sheet setup
