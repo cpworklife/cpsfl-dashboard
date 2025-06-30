@@ -29,28 +29,38 @@ def load_sheet(gid):
     return df.reset_index(drop=True)
 
 def half_circle_gauge(value, label):
-    fig, ax = plt.subplots(figsize=(3, 2), subplot_kw={'projection': 'polar'})
+    fig, ax = plt.subplots(figsize=(3.5, 2.2), subplot_kw={'projection': 'polar'})
+
+    # Background: full half-circle in light gray
     theta = np.linspace(np.pi, 2 * np.pi, 100)
-    
     ax.bar(theta, [1]*len(theta), width=np.pi/100, color='lightgray', bottom=0.5)
-    
+
+    # Foreground: green progress bar filling left to right
     filled_theta = np.linspace(np.pi, np.pi + (value / 100.0) * np.pi, 100)
     ax.bar(filled_theta, [1]*len(filled_theta), width=np.pi/100, color='green', bottom=0.5)
 
+    # Hide axis ticks and grid
     ax.set_yticklabels([])
     ax.set_xticklabels([])
     ax.grid(False)
+
+    # Positioning for correct fill direction and upright
     ax.set_theta_zero_location("W")
     ax.set_theta_direction(-1)
     ax.set_rlim(0, 1.5)
 
-    # Add label above
-    ax.set_title(label, va='bottom', fontsize=10)
+    # Label above gauge
+    ax.set_title(label, va='bottom', fontsize=11)
 
-    # Add percentage text inside
-    ax.text(0, 0, f"{value:.2f}%", fontsize=12, fontweight='bold', ha='center', va='center')
+    # Center text (value)
+    ax.text(0, 0, f"{value:.2f}%", fontsize=14, fontweight='bold', ha='center', va='center')
+
+    # Add 0 and 100 on either side below the arc
+    ax.text(np.pi, 0.25, "0", ha='center', va='center', fontsize=8)
+    ax.text(2*np.pi, 0.25, "100", ha='center', va='center', fontsize=8)
 
     return fig
+
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
