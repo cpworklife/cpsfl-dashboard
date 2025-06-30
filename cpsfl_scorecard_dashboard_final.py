@@ -25,52 +25,47 @@ tabs = {
 def load_sheet(gid):
     url = base_url.format(gid=gid)
     df = pd.read_csv(url)
-    df.columns = df.columns.str.strip()
+    df.columns = df.columns.str.strip()  # Clean column names
     return df.reset_index(drop=True)
 
+# Half-circle gauge function with labels and percentage
 def half_circle_gauge(value, label):
-    fig, ax = plt.subplots(figsize=(3, 2), subplot_kw={'projection': 'polar'})
-
-    # Create reversed angle values for right-to-left fill
+    fig, ax = plt.subplots(figsize=(3.5, 2.2), subplot_kw={'projection': 'polar'})
     theta = np.linspace(0, np.pi, 100)
     ax.plot(theta, [1]*100, color='lightgray', linewidth=20)
-
-    # Calculate fill length based on value
     filled_len = int(len(theta) * value / 100)
     ax.plot(theta[:filled_len], [1]*filled_len, color='green', linewidth=20)
-
-    # Style and position
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.set_theta_zero_location("E")  # Right side start
+    ax.set_theta_direction(-1)
+    ax.set_rlim(0, 1.1)
     ax.set_facecolor("white")
     ax.grid(False)
-    ax.set_theta_zero_location("E")  # Start from the right
-    ax.set_theta_direction(-1)       # Clockwise fill
-    ax.set_xticks([])                # Hide ticks
-    ax.set_yticks([])                # Hide ticks
-    ax.set_rlim(0, 1.1)
-
-    ax.set_title(f"{label}\n{value:.1f}%", va='bottom', fontsize=10)
-
+    ax.text(0, 0.2, f"{value:.2f}", ha='center', va='center', fontsize=16, fontweight='bold')
+    ax.text(0, -0.1, "%", ha='center', va='center', fontsize=10)
+    ax.set_title(label, va='bottom', fontsize=10, pad=20)
     return fig
-
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
-    summary_df["Score"] = summary_df["Score"].astype(float)
 
+    # Clean Score column (remove % and convert to float)
+    summary_df["Score"] = summary_df["Score"].astype(str).str.replace("%", "").astype(float)
+
+    # Half-circle gauges
     col1, col2, col3 = st.columns(3)
     with col1:
-        score1 = summary_df.loc[0, "Score"]
-        st.pyplot(half_circle_gauge(score1, summary_df.loc[0, "Description"]))
+        st.pyplot(half_circle_gauge(summary_df.loc[0, "Score"], summary_df.loc[0, "Description"]))
     with col2:
-        score2 = summary_df.loc[1, "Score"]
-        st.pyplot(half_circle_gauge(score2, summary_df.loc[1, "Description"]))
+        st.pyplot(half_circle_gauge(summary_df.loc[1, "Score"], summary_df.loc[1, "Description"]))
     with col3:
-        score3 = summary_df.loc[2, "Score"]
-        st.pyplot(half_circle_gauge(score3, summary_df.loc[2, "Description"]))
+        st.pyplot(half_circle_gauge(summary_df.loc[2, "Score"], summary_df.loc[2, "Description"]))
 
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
 
