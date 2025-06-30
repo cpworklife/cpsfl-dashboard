@@ -30,21 +30,28 @@ def load_sheet(gid):
 
 def half_circle_gauge(value, label):
     fig, ax = plt.subplots(figsize=(3, 2), subplot_kw={'projection': 'polar'})
-    theta = np.linspace(np.pi, 2 * np.pi, 100)
+
+    # Create reversed angle values for right-to-left fill
+    theta = np.linspace(0, np.pi, 100)
     ax.plot(theta, [1]*100, color='lightgray', linewidth=20)
 
-    percent_fill = int((value / 100) * 100)
-    ax.plot(theta[:percent_fill], [1]*percent_fill, color='green', linewidth=20)
+    # Calculate fill length based on value
+    filled_len = int(len(theta) * value / 100)
+    ax.plot(theta[:filled_len], [1]*filled_len, color='green', linewidth=20)
 
-    ax.set_yticklabels([])
-    ax.set_xticklabels([])
-    ax.set_title(f"{label}\n{value:.1f}%", fontsize=10)
+    # Style and position
     ax.set_facecolor("white")
     ax.grid(False)
-    ax.set_theta_zero_location("W")
-    ax.set_theta_direction(-1)
+    ax.set_theta_zero_location("E")  # Start from the right
+    ax.set_theta_direction(-1)       # Clockwise fill
+    ax.set_xticks([])                # Hide ticks
+    ax.set_yticks([])                # Hide ticks
     ax.set_rlim(0, 1.1)
+
+    ax.set_title(f"{label}\n{value:.1f}%", va='bottom', fontsize=10)
+
     return fig
+
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
