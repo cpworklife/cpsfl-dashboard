@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 
-# Streamlit page config
 st.set_page_config(page_title="CPSFL Scorecard Dashboard", layout="wide")
 
 # Centered title
@@ -26,13 +25,12 @@ def load_sheet(gid):
     url = base_url.format(gid=gid)
     df = pd.read_csv(url)
     df.columns = df.columns.str.strip()
-    return df.reset_index(drop=True)
+    return df
 
-def rainbow_gauge(label, value):
+def plot_gauge(value, label):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        domain={'x': [0, 1], 'y': [0, 1]},
         title={'text': label},
         gauge={
             'axis': {'range': [0, 100]},
@@ -49,44 +47,65 @@ def rainbow_gauge(label, value):
             }
         }
     ))
-    fig.update_layout(margin=dict(l=20, r=20, t=50, b=0), height=300)
+    fig.update_layout(margin=dict(l=20, r=20, t=50, b=0), height=250)
     return fig
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
-    summary_df["Score"] = summary_df["Score"].astype(str).str.replace("%", "").astype(float)
+    summary_df["Score"] = summary_df["Score"].str.replace("%", "").astype(float)
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.plotly_chart(rainbow_gauge(summary_df.loc[0, "Description"], summary_df.loc[0, "Score"]), use_container_width=True)
+        st.plotly_chart(plot_gauge(summary_df.loc[0, "Score"], summary_df.loc[0, "Description"]), use_container_width=True)
     with col2:
-        st.plotly_chart(rainbow_gauge(summary_df.loc[1, "Description"], summary_df.loc[1, "Score"]), use_container_width=True)
+        st.plotly_chart(plot_gauge(summary_df.loc[1, "Score"], summary_df.loc[1, "Description"]), use_container_width=True)
     with col3:
-        st.plotly_chart(rainbow_gauge(summary_df.loc[2, "Description"], summary_df.loc[2, "Score"]), use_container_width=True)
+        st.plotly_chart(plot_gauge(summary_df.loc[2, "Score"], summary_df.loc[2, "Description"]), use_container_width=True)
 
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
 except Exception as e:
     st.error(f"Error loading Summary Metrics: {e}")
 
-# Generic loader for all other sections
-def render_section(header, tab_name, note=None):
-    st.header(header)
-    try:
-        df = load_sheet(tabs[tab_name])
-        if note:
-            st.markdown(note)
-        st.dataframe(df, use_container_width=True, hide_index=True)
-    except Exception as e:
-        st.error(f"Error loading {tab_name}: {e}")
+# SECTION 2 – Overall Score Breakdown
+st.header("📈 Overall Score Breakdown")
+try:
+    overall_df = load_sheet(tabs["Overall Score Breakdown"])
+    st.markdown("This score is the overall performance score for completed POMs (MHOs) and Discharges.")
+    st.dataframe(overall_df, use_container_width=True, hide_index=True)
+except Exception as e:
+    st.error(f"Error loading Overall Score Breakdown: {e}")
 
-render_section("📈 Overall Score Breakdown", "Overall Score Breakdown",
-               "This score is the overall performance score for completed POMs (MHOs) and Discharges.")
+# SECTION 3 – Reports Compliance Breakdown
+st.header("📄 Reports Compliance Breakdown")
+try:
+    reports_df = load_sheet(tabs["Reports Compliance Breakdown"])
+    st.markdown("*Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
+    st.dataframe(reports_df, use_container_width=True, hide_index=True)
+except Exception as e:
+    st.error(f"Error loading Reports Compliance Breakdown: {e}")
 
-render_section("📄 Reports Compliance Breakdown", "Reports Compliance Breakdown",
-               "*Compliance is measured by computing the number of items submitted ON TIME divided by TOTAL items.*")
+# SECTION 4 – Performance Measure Breakdown
+st.header("📊 Performance Measure Breakdown")
+try:
+    perf_df = load_sheet(tabs["Performance Measure Breakdown"])
+    st.dataframe(perf_df, use_container_width=True, hide_index=True)
+except Exception as e:
+    st.error(f"Error loading Performance Measure Breakdown: {e}")
 
-render_section("📊 Performance Measure Breakdown", "Performance Measure Breakdown")
-render_section("⏳ Waitlist Overview", "Waitlist Overview")
-render_section("🏥 Waitlist by Program", "Waitlist by Program")
+# SECTION 5 – Waitlist Overview
+st.header("⏳ Waitlist Overview")
+try:
+    waitlist_df = load_sheet(tabs["Waitlist Overview"])
+    st.dataframe(waitlist_df, use_container_width=True, hide_index=True)
+except Exception as e:
+    st.error(f"Error loading Waitlist Overview: {e}")
+
+# SECTION 6 – Waitlist by Program
+st.header("🏥 Waitlist by Program")
+try:
+    waitlist_prog_df = load_sheet(tabs["Waitlist by Program"])
+    st.dataframe(waitlist_prog_df, use_container_width=True, hide_index=True)
+except Exception as e:
+    st.error(f"Error loading Waitlist by Program: {e}")
