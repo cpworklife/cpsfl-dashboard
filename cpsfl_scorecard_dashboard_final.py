@@ -53,19 +53,10 @@ except Exception as e:
 st.header("📊 Performance Measure Breakdown")
 try:
     perf_df = load_sheet(tabs["Performance Measure Breakdown"])
-    perf_df['Label'] = perf_df['Measure'] + "\n" + perf_df['Description']
-    fig, ax = plt.subplots(figsize=(10, 6))
-    x = range(len(perf_df))
-    ax.bar([i - 0.2 for i in x], perf_df['Score'], width=0.4, label='Score', color='green')
-    ax.bar([i + 0.2 for i in x], perf_df['Target'], width=0.4, label='Target', color='gray')
-    ax.set_xticks(x)
-    ax.set_xticklabels(perf_df['Label'], rotation=45, ha='right', fontsize=8)
-    ax.set_ylabel("Value")
-    ax.set_title("Performance Measures vs Targets")
-    ax.legend()
-    st.pyplot(fig)
+    st.dataframe(perf_df)
 except Exception as e:
     st.error(f"Error loading Performance Measure Breakdown: {e}")
+
 
 # SECTION 5 – Waitlist Overview
 st.header("⏳ Waitlist Overview")
