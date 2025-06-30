@@ -9,8 +9,7 @@ st.title("🌟 CPSFL Scorecard Overview")
 st.markdown("---")
 
 # Load data
-url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRW3e5OB0urjbl6byFS2TkqUJGv7-xgb5kPBZUEKe3EyG9d5tML9MzBhVDLZzZAcBZAzPUZhReLbHR4/pub?output=csv"
-
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVohW51_sRlF_mD7xijTJ8hW47jtIx2-9Ff2mNytnLKWTt926hR_yTtSihI7N2gu9EnEGP3wvjK43v/pub?output=csv"
 try:
     df = pd.read_csv(url)
 
