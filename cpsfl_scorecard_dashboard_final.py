@@ -22,29 +22,6 @@ tabs = {
     "Waitlist by Program": 1961299205
 }
 
-def load_sheet(gid):
-    url = base_url.format(gid=gid)
-    df = pd.read_csv(url)
-    df.columns = df.columns.str.strip()
-    return df.reset_index(drop=True)
-
-def block_progress_chart(score, label, size=10):
-    filled_blocks = int(round(score))
-    total_blocks = size * size
-
-    fig, ax = plt.subplots(figsize=(2.5, 2.5))
-    for i in range(total_blocks):
-        row = i // size
-        col = i % size
-        color = 'green' if i < filled_blocks else 'lightgray'
-        ax.add_patch(plt.Rectangle((col, size - 1 - row), 1, 1, color=color))
-
-    ax.set_xlim(0, size)
-    ax.set_ylim(0, size)
-    ax.set_aspect('equal')
-    ax.axis('off')
-    ax.set_title(f"{label}\n{score:.2f}%", fontsize=12)
-    return fig
 
 # SECTION 1 – Summary Metrics
 st.header("📊 Summary Metrics")
