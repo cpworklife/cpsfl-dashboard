@@ -49,17 +49,21 @@ st.header("📊 Summary Metrics")
 try:
     summary_df = load_sheet(tabs["Summary Metrics"])
 
+     # Clean Score column (remove % and convert to float)
+    summary_df["Score"] = summary_df["Score"].str.replace("%", "").astype(float)
+
     # Half-circle gauges
     col1, col2, col3 = st.columns(3)
     with col1:
-        score1 = int(summary_df.loc[0, "Score"])
+        score1 = summary_df.loc[0, "Score"]
         st.pyplot(half_circle_gauge(score1, summary_df.loc[0, "Description"]))
     with col2:
-        score2 = int(summary_df.loc[1, "Score"])
+        score2 = summary_df.loc[1, "Score"]
         st.pyplot(half_circle_gauge(score2, summary_df.loc[1, "Description"]))
     with col3:
-        score3 = int(summary_df.loc[2, "Score"])
+        score3 = summary_df.loc[2, "Score"]
         st.pyplot(half_circle_gauge(score3, summary_df.loc[2, "Description"]))
+
 
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
 
